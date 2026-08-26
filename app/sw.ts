@@ -16,16 +16,16 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
 
-  // fallbacks: {
-  //   entries: [
-  //     {
-  //       url: "/offline", 
-  //       matcher({ request }) {
-  //         return request.mode === "navigate";
-  //       },
-  //     },
-  //   ],
-  // },
+  fallbacks: {
+    entries: [
+      {
+        url: "/offline", 
+        matcher({ request }) {
+          return request.mode === "navigate";
+        },
+      },
+    ],
+  },
 
   runtimeCaching: [
     {
@@ -50,12 +50,12 @@ const serwist = new Serwist({
       }),
     },
 
-    {
-      matcher: ({ request }) => request.mode === "navigate",
-      handler: new StaleWhileRevalidate({
-        cacheName: "pages-cache",
-      }),
-    },
+    // {
+    //   matcher: ({ request }) => request.mode === "navigate",
+    //   handler: new StaleWhileRevalidate({
+    //     cacheName: "pages-cache",
+    //   }),
+    // },
 
     ...defaultCache,
   ],
