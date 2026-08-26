@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry } from "serwist";
-import { CacheFirst, NetworkFirst, Serwist } from "serwist";
+import { CacheFirst, NetworkFirst, Serwist, StaleWhileRevalidate } from "serwist";
 
 declare const self: ServiceWorkerGlobalScope & {
   __SW_MANIFEST: (string | PrecacheEntry)[] | undefined;
@@ -12,16 +12,16 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
 
-  fallbacks: {
-    entries: [
-      {
-        url: "/offline",
-        matcher({ request }) {
-          return request.mode === "navigate";
-        },
-      },
-    ],
-  },
+  // fallbacks: {
+  //   entries: [
+  //     {
+  //       url: "/offline", 
+  //       matcher({ request }) {
+  //         return request.mode === "navigate";
+  //       },
+  //     },
+  //   ],
+  // },
 
   runtimeCaching: [
     {
@@ -46,8 +46,17 @@ const serwist = new Serwist({
       }),
     },
 
+    {
+      matcher: ({ request }) => request.mode === "navigate",
+      handler: new StaleWhileRevalidate({
+        cacheName: "pages-cache",
+      }),
+    },
+
     ...defaultCache,
   ],
+
+  // runtimeCaching: defaultCache,
 });
 
 serwist.addEventListeners();
